@@ -5,7 +5,10 @@ import java.util.Objects;
 
 import org.codeberry.berrytalk.chat.common.model.Media;
 
-public record MessageRequest(MessageType type, String text, List<Media> media) {
+public record MessageRequest(
+    MessageType type,
+    String text,
+    List<Media> media) {
 
   public MessageRequest {
     throw new UnsupportedOperationException("Use MessageRequest.of() instead.");

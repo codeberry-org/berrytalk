@@ -7,6 +7,6 @@ public interface ChatRepository {
   
   void save(Chat chat);
   Optional<Chat> findById(String id);
-  List<Chat> findAllByUser(String userId, int size);
-  List<Chat> findAllByUser(String userId, String prevChatId, int size);
+  List<ChatDetail> findDetailsByUser(String userId, int size);
+  List<ChatDetail> findDetailsByUser(String userId, String prevChatId, int size);
 }

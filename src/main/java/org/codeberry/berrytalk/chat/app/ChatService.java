@@ -2,6 +2,7 @@ package org.codeberry.berrytalk.chat.app;
 
 import java.util.List;
 
+import org.codeberry.berrytalk.chat.app.dto.ChatDetailInfo;
 import org.codeberry.berrytalk.chat.app.dto.ChatInfo;
 import org.codeberry.berrytalk.chat.app.dto.MessageInfo;
 import org.codeberry.berrytalk.chat.app.dto.MessageRequest;
@@ -78,15 +79,15 @@ public class ChatService {
     return ChatInfo.from(chat);
   }
 
-  public List<ChatInfo> retrieveChat(String userId, int size) {
-    return chatRepository.findAllByUser(userId, size).stream()
-        .map(ChatInfo::from)
+  public List<ChatDetailInfo> retrieveChat(String userId, int size) {
+    return chatRepository.findDetailsByUser(userId, size).stream()
+        .map(ChatDetailInfo::from)
         .toList();
   }
 
-  public List<ChatInfo> retrieveChat(String userId, String prevChatId, int size) {
-    return chatRepository.findAllByUser(userId, prevChatId, size).stream()
-        .map(ChatInfo::from)
+  public List<ChatDetailInfo> retrieveChat(String userId, String prevChatId, int size) {
+    return chatRepository.findDetailsByUser(userId, prevChatId, size).stream()
+        .map(ChatDetailInfo::from)
         .toList();
   }
 
@@ -96,9 +97,9 @@ public class ChatService {
     ChatUser user = chat.getUser(userId)
         .orElseThrow(() -> new RuntimeException("User is not a member of the chat"));
 
-    chat.addMessage(createMessageByType(user, messageRequest));
+    messageRepository.save(createMessageByType(user, messageRequest));
 
-    chatRepository.save(chat);
+    // send message to users
   }
 
   private Message createMessageByType(ChatUser user, MessageRequest messageRequest) {

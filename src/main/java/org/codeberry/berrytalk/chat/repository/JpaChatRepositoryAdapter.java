@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.codeberry.berrytalk.chat.domain.Chat;
+import org.codeberry.berrytalk.chat.domain.ChatDetail;
 import org.codeberry.berrytalk.chat.domain.ChatRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,15 +24,15 @@ public class JpaChatRepositoryAdapter implements ChatRepository {
   }
 
   @Override
-  public List<Chat> findAllByUser(String userId, int size) {
+  public List<ChatDetail> findDetailsByUser(String userId, int size) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'findAllByUser'");
+    throw new UnsupportedOperationException("Unimplemented method 'findDetailsByUser'");
   }
 
   @Override
-  public List<Chat> findAllByUser(String userId, String prevChatId, int size) {
+  public List<ChatDetail> findDetailsByUser(String userId, String prevChatId, int size) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'findAllByUser'");
+    throw new UnsupportedOperationException("Unimplemented method 'findDetailsByUser'");
   }
   
 }

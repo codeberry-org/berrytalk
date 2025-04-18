@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import org.codeberry.berrytalk.chat.common.util.IdUtil;
 import org.codeberry.berrytalk.chat.domain.exception.AlreadyExistException;
-import org.codeberry.berrytalk.chat.domain.exception.InvalidMessageException;
 
 import lombok.Getter;
 
@@ -24,10 +23,6 @@ public class Chat {
 
   private String title;
   private String imageId;
-  private String lastMessageId;
-  private String lastMessageTitle;
-
-  private List<Message> addedMessages = new ArrayList<>();
 
   public Chat(String userId) {
     this.id = IdUtil.create(ID_PREFIX);
@@ -35,14 +30,12 @@ public class Chat {
     this.createdAt = new Date();
   }
 
-  public Chat(String id, List<ChatUser> users, Date createdAt, String title, String imageId, String lastMessageId, String lastMessageTitle) {
+  public Chat(String id, List<ChatUser> users, Date createdAt, String title, String imageId) {
     this.id = id;
     this.users = users;
     this.createdAt = createdAt;
     this.title = title;
     this.imageId = imageId;
-    this.lastMessageId = lastMessageId;
-    this.lastMessageTitle = lastMessageTitle;
   }
 
   public void updateTitle(String title) {
@@ -55,10 +48,6 @@ public class Chat {
 
   public List<ChatUser> getUsers() {
     return Collections.unmodifiableList(users);
-  }
-
-  public List<Message> getAddedMessages() {
-    return Collections.unmodifiableList(addedMessages);
   }
 
   public ChatUser addUser(String userId) {
@@ -87,15 +76,6 @@ public class Chat {
         .or(() -> users.stream()
             .sorted(Comparator.comparing(ChatUser::getJoinedAt))
             .findFirst());
-  }
-
-  public void addMessage(Message message) {
-    if (!id.equals(message.getChatId())) {
-      throw new InvalidMessageException("Not a message created in this chat");
-    }
-    lastMessageId = message.getId();
-    lastMessageTitle = message.getTitle();
-    addedMessages.add(message);
   }
 
   public void readMessage(String userId, String messageId) {
