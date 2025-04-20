@@ -1,5 +1,6 @@
 package org.codeberry.berrytalk.chat.repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,15 +25,9 @@ public class JpaChatRepositoryAdapter implements ChatRepository {
   }
 
   @Override
-  public List<ChatDetail> findDetailsByUser(String userId, int size) {
+  public List<ChatDetail> findAllDetailByUser(String userId, Date updatedAfter) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'findDetailsByUser'");
-  }
-
-  @Override
-  public List<ChatDetail> findDetailsByUser(String userId, String prevChatId, int size) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'findDetailsByUser'");
+    throw new UnsupportedOperationException("Unimplemented method 'findAllDetailByUser'");
   }
   
 }

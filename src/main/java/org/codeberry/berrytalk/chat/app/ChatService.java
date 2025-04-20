@@ -1,5 +1,6 @@
 package org.codeberry.berrytalk.chat.app;
 
+import java.util.Date;
 import java.util.List;
 
 import org.codeberry.berrytalk.chat.app.dto.ChatDetailInfo;
@@ -79,14 +80,8 @@ public class ChatService {
     return ChatInfo.from(chat);
   }
 
-  public List<ChatDetailInfo> retrieveChat(String userId, int size) {
-    return chatRepository.findDetailsByUser(userId, size).stream()
-        .map(ChatDetailInfo::from)
-        .toList();
-  }
-
-  public List<ChatDetailInfo> retrieveChat(String userId, String prevChatId, int size) {
-    return chatRepository.findDetailsByUser(userId, prevChatId, size).stream()
+  public List<ChatDetailInfo> retrieveChat(String userId, Date updatedAfter) {
+    return chatRepository.findAllDetailByUser(userId, updatedAfter).stream()
         .map(ChatDetailInfo::from)
         .toList();
   }
