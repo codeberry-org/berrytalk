@@ -2,6 +2,7 @@ package org.codeberry.berrytalk.chat.app;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.codeberry.berrytalk.chat.app.dto.ChatDetailInfo;
 import org.codeberry.berrytalk.chat.app.dto.ChatInfo;
@@ -12,15 +13,23 @@ import org.codeberry.berrytalk.chat.domain.ChatRepository;
 import org.codeberry.berrytalk.chat.domain.ChatUser;
 import org.codeberry.berrytalk.chat.domain.Message;
 import org.codeberry.berrytalk.chat.domain.MessageRepository;
+import org.codeberry.berrytalk.chat.domain.NotificationService;
+import org.codeberry.berrytalk.chat.domain.RelayService;
+import org.codeberry.berrytalk.chat.domain.SessionManager;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChatService {
   private final ChatRepository chatRepository;
   private final MessageRepository messageRepository;
+  private final SessionManager sessionManager;
+  private final RelayService relayService;
+  private final NotificationService notificationService;
 
   public ChatInfo createChat(String userId) {
     Chat chat = new Chat(userId);
@@ -92,9 +101,27 @@ public class ChatService {
     ChatUser user = chat.getUser(userId)
         .orElseThrow(() -> new RuntimeException("User is not a member of the chat"));
 
-    messageRepository.save(createMessageByType(user, messageRequest));
+    Message message = createMessageByType(user, messageRequest);
 
-    // send message to users
+    messageRepository.save(message);
+
+    List<String> userIds = chat.getUsers().stream()
+        .map(ChatUser::getUserId)
+        .toList();
+    log.info("userIds: {}", userIds);
+
+    Set<String> sentUserIds = sessionManager.sendMessage(userIds, message);
+    log.info("sentUserIds: {}", sentUserIds);
+
+    Set<String> relayedUserIds = relayService.relayMessage(userIds, message);
+    log.info("relayedUserIds: {}", relayedUserIds);
+
+    List<String> offlineUserIds = userIds.stream()
+        .filter(u -> !sentUserIds.contains(u))
+        .filter(u -> !relayedUserIds.contains(u))
+        .toList();
+    Set<String> notifiedUserIds = notificationService.notifyMessage(offlineUserIds, message);
+    log.info("notifiedUserIds: {}", notifiedUserIds);
   }
 
   private Message createMessageByType(ChatUser user, MessageRequest messageRequest) {
