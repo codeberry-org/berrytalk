@@ -21,7 +21,7 @@ import lombok.Getter;
 @Table(name = "message")
 public class MessageEntity extends BaseEntity {
   private static ObjectMapper om = new ObjectMapper();
-  private static enum Type {
+  public static enum Type {
     TEXT,
     MEDIA
   }
