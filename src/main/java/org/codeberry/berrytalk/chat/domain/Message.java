@@ -2,9 +2,9 @@ package org.codeberry.berrytalk.chat.domain;
 
 import java.util.Date;
 
-import org.codeberry.berrytalk.chat.common.model.MessageType;
-import org.codeberry.berrytalk.chat.common.util.Args;
-import org.codeberry.berrytalk.chat.common.util.IdUtil;
+import org.codeberry.berrytalk.common.model.MessageType;
+import org.codeberry.berrytalk.common.util.Args;
+import org.codeberry.berrytalk.common.util.IdUtil;
 
 public abstract class Message {
   public static final String ID_PREFIX = "msg";

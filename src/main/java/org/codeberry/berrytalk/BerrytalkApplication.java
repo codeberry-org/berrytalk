@@ -1,11 +1,11 @@
-package org.codeberry.berrytalk.chat;
+package org.codeberry.berrytalk;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BerrytalkChatApplication {
+public class BerrytalkApplication {
   public static void main(String[] args) {
-    SpringApplication.run(BerrytalkChatApplication.class, args);
+    SpringApplication.run(BerrytalkApplication.class, args);
   }
 }

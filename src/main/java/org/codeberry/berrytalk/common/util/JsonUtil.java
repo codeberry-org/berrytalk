@@ -1,4 +1,4 @@
-package org.codeberry.berrytalk.chat.common.util;
+package org.codeberry.berrytalk.common.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

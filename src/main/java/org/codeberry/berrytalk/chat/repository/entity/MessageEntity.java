@@ -3,6 +3,9 @@ package org.codeberry.berrytalk.chat.repository.entity;
 import org.codeberry.berrytalk.chat.domain.MediaMessage;
 import org.codeberry.berrytalk.chat.domain.Message;
 import org.codeberry.berrytalk.chat.domain.TextMessage;
+import org.codeberry.berrytalk.common.model.Media;
+import org.codeberry.berrytalk.common.model.MessageType;
+import org.codeberry.berrytalk.common.util.JsonUtil;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -16,10 +19,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 
 import java.util.List;
-
-import org.codeberry.berrytalk.chat.common.model.Media;
-import org.codeberry.berrytalk.chat.common.model.MessageType;
-import org.codeberry.berrytalk.chat.common.util.JsonUtil;
 
 @Getter
 @Entity

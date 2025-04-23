@@ -2,7 +2,7 @@ package org.codeberry.berrytalk.chat.domain;
 
 import java.util.function.Consumer;
 
-import org.codeberry.berrytalk.chat.common.model.DeviceType;
+import org.codeberry.berrytalk.common.model.DeviceType;
 
 public interface Session {
   String getUserId();

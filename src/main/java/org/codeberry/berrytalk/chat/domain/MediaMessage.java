@@ -4,9 +4,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.codeberry.berrytalk.chat.common.model.Media;
-import org.codeberry.berrytalk.chat.common.model.MessageType;
-import org.codeberry.berrytalk.chat.common.util.Args;
+import org.codeberry.berrytalk.common.model.Media;
+import org.codeberry.berrytalk.common.model.MessageType;
+import org.codeberry.berrytalk.common.util.Args;
 
 public class MediaMessage extends Message {
   private final List<Media> media;

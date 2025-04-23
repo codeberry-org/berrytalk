@@ -1,4 +1,4 @@
-package org.codeberry.berrytalk.chat.common.model;
+package org.codeberry.berrytalk.common.model;
 
 public enum DeviceType {
   MOBILE,

@@ -2,8 +2,8 @@ package org.codeberry.berrytalk.chat.domain;
 
 import java.util.Date;
 
-import org.codeberry.berrytalk.chat.common.model.MessageType;
-import org.codeberry.berrytalk.chat.common.util.Args;
+import org.codeberry.berrytalk.common.model.MessageType;
+import org.codeberry.berrytalk.common.util.Args;
 
 public class TextMessage extends Message {
   private final String text;

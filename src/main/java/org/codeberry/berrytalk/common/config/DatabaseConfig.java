@@ -1,4 +1,4 @@
-package org.codeberry.berrytalk.chat.common.config;
+package org.codeberry.berrytalk.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

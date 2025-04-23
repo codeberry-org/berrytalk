@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.codeberry.berrytalk.chat.common.model.Media;
-import org.codeberry.berrytalk.chat.common.util.Args;
+import org.codeberry.berrytalk.common.model.Media;
+import org.codeberry.berrytalk.common.util.Args;
 
 public class ChatUser {
   private final String chatId;

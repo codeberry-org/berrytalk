@@ -2,9 +2,9 @@ package org.codeberry.berrytalk.chat.controller;
 
 import java.util.function.Consumer;
 
-import org.codeberry.berrytalk.chat.common.model.DeviceType;
 import org.codeberry.berrytalk.chat.domain.Message;
 import org.codeberry.berrytalk.chat.domain.Session;
+import org.codeberry.berrytalk.common.model.DeviceType;
 
 public class WebSocketSession implements Session {
 

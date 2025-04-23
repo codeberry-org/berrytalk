@@ -2,8 +2,8 @@ package org.codeberry.berrytalk.chat.app.dto;
 
 import java.util.Date;
 
-import org.codeberry.berrytalk.chat.common.model.MessageType;
 import org.codeberry.berrytalk.chat.domain.Message;
+import org.codeberry.berrytalk.common.model.MessageType;
 
 public record MessageInfo(
     String id,
