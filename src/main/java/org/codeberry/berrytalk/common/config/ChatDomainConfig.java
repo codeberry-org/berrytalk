@@ -1,14 +1,14 @@
 package org.codeberry.berrytalk.common.config;
 
-import org.codeberry.berrytalk.chat.domain.SessionManager;
+import org.codeberry.berrytalk.chat.domain.MessageSessionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DomainConfig {
+public class ChatDomainConfig {
   
   @Bean
-  public SessionManager sessionManager() {
-    return new SessionManager();
+  public MessageSessionService sessionManager() {
+    return new MessageSessionService();
   }
 }

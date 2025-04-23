@@ -1,14 +1,12 @@
 package org.codeberry.berrytalk.chat.domain;
 
-import java.util.function.Consumer;
-
 import org.codeberry.berrytalk.common.model.DeviceType;
 
-public interface Session {
+public interface MessageSession {
+  String getId();
   String getUserId();
-  String getDeviceId();
   DeviceType getDeviceType();
+  String getDeviceId();
   void sendMessage(Message message);
-  void onClose(Consumer<Session> doOnClose);
   void close();
 }

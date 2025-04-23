@@ -11,10 +11,6 @@ public record MessageRequest(
     String text,
     List<Media> media) {
 
-  public MessageRequest {
-    throw new UnsupportedOperationException("Use MessageRequest.of() instead.");
-  }
-
   public static MessageRequest newTextMessageRequest(String text) {
     return new MessageRequest(MessageType.TEXT,
         Args.requireNotEmpty(text, "text"),

@@ -7,7 +7,7 @@ import org.codeberry.berrytalk.chat.domain.ChatDetail;
 
 public record ChatDetailInfo(
     String id,
-    List<UserInfo> users,
+    List<ChatUserInfo> users,
     String title,
     String imageId,
     MessageInfo lastMessage,
@@ -19,7 +19,7 @@ public record ChatDetailInfo(
     }
     return new ChatDetailInfo(
         chatDetail.id(),
-        chatDetail.users().stream().map(UserInfo::from).toList(),
+        chatDetail.users().stream().map(ChatUserInfo::from).toList(),
         chatDetail.title(),
         chatDetail.imageId(),
         MessageInfo.from(chatDetail.lastMessage()),
