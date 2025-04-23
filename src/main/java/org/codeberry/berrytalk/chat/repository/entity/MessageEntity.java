@@ -4,8 +4,7 @@ import org.codeberry.berrytalk.chat.domain.MediaMessage;
 import org.codeberry.berrytalk.chat.domain.Message;
 import org.codeberry.berrytalk.chat.domain.TextMessage;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,11 +15,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 
+import java.util.List;
+
+import org.codeberry.berrytalk.chat.common.model.Media;
+import org.codeberry.berrytalk.chat.common.util.JsonUtil;
+
 @Getter
 @Entity
 @Table(name = "message")
 public class MessageEntity extends BaseEntity {
-  private static ObjectMapper om = new ObjectMapper();
   public static enum Type {
     TEXT,
     MEDIA
@@ -45,30 +48,61 @@ public class MessageEntity extends BaseEntity {
 
   MessageEntity() {}
 
-  private static MessageEntity fromMessage(Message message) {
+  MessageEntity(String id) {
+    this.id = id;
+  }
+
+  public static MessageEntity from(Message message) {
+    if (message instanceof TextMessage textMessage) {
+      return from(textMessage);
+    } else if (message instanceof MediaMessage mediaMessage) {
+      return from(mediaMessage);
+    }
+    return null;
+  }
+
+  private static MessageEntity from(TextMessage message) {
     MessageEntity messageEntity = new MessageEntity();
     messageEntity.id = message.getId();
     messageEntity.chat = new ChatEntity(message.getChatId());
     messageEntity.userId = message.getUserId();
-    return messageEntity;
-  }
-
-  public static MessageEntity from(TextMessage message) {
-    MessageEntity messageEntity = fromMessage(message);
     messageEntity.type = Type.TEXT;
     messageEntity.content = message.getText();
     return messageEntity;
   }
 
-  public static MessageEntity from(MediaMessage message) {
-    MessageEntity messageEntity = fromMessage(message);
+  private static MessageEntity from(MediaMessage message) {
+    MessageEntity messageEntity = new MessageEntity();
+    messageEntity.id = message.getId();
+    messageEntity.chat = new ChatEntity(message.getChatId());
+    messageEntity.userId = message.getUserId();
     messageEntity.type = Type.MEDIA;
-    try {
-      messageEntity.content = om.writeValueAsString(message.getMedia());
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    }
+    messageEntity.content = JsonUtil.toJson(message.getMedia());
     return messageEntity;
   }
 
+  public Message toMessage() {
+    return switch(type) {
+      case TEXT -> toTextMessage();
+      case MEDIA -> toMediaMessage();
+    };
+  }
+
+  private TextMessage toTextMessage() {
+    return new TextMessage(
+        id,
+        chat.getId(),
+        userId,
+        content,
+        getCreatedAt());
+  }
+
+  private MediaMessage toMediaMessage() {
+    return new MediaMessage(
+        id,
+        chat.getId(),
+        userId,
+        getCreatedAt(),
+        JsonUtil.fromJson(content, new TypeReference<List<Media>>() {}));
+  }
 }

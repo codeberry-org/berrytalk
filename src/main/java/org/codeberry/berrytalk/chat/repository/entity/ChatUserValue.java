@@ -2,6 +2,8 @@ package org.codeberry.berrytalk.chat.repository.entity;
 
 import java.util.Date;
 
+import org.codeberry.berrytalk.chat.domain.ChatUser;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
@@ -24,4 +26,23 @@ public class ChatUserValue {
 
   @Column(name = "last_message_id", nullable = true)
   private String lastMessageId;
+
+  ChatUserValue() {}
+
+  ChatUserValue(ChatEntity chatEntity, ChatUser chatUser) {
+    this.chat = chatEntity;
+    this.userId = chatUser.getUserId();
+    this.isCreator = chatUser.getIsCreator();
+    this.joinedAt = chatUser.getJoinedAt();
+    this.lastMessageId = chatUser.getLastMessageId();
+  }
+
+  public ChatUser toChatUser() {
+    return new ChatUser(
+        chat.getId(),
+        userId,
+        isCreator,
+        joinedAt,
+        lastMessageId);
+  }
 }

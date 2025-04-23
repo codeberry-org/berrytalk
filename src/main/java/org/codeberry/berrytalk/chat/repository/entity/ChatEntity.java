@@ -1,6 +1,10 @@
 package org.codeberry.berrytalk.chat.repository.entity;
 
+import java.util.Collections;
 import java.util.List;
+
+import org.codeberry.berrytalk.chat.domain.Chat;
+import org.codeberry.berrytalk.chat.domain.ChatDetail;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -12,9 +16,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-@Getter
+@Data
+@EqualsAndHashCode(callSuper=false)
 @Entity
 @Table(name = "chat")
 public class ChatEntity extends BaseEntity {
@@ -25,7 +31,7 @@ public class ChatEntity extends BaseEntity {
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "chat_user", joinColumns = @JoinColumn(name = "chat_id"))
   @OrderColumn(name = "joined_at")
-  private List<ChatUserValue> users;
+  private List<ChatUserValue> users = Collections.emptyList();
 
   @Column(name = "title", nullable = true)
   private String title;
@@ -40,5 +46,34 @@ public class ChatEntity extends BaseEntity {
 
   ChatEntity(String id) {
     this.id = id;
+  }
+
+  public static ChatEntity from(Chat chat) {
+    ChatEntity chatEntity = new ChatEntity(chat.getId());
+    chatEntity.users = chat.getUsers().stream()
+        .map(u -> new ChatUserValue(chatEntity, u))
+        .toList();
+    chatEntity.title = chat.getTitle();
+    chatEntity.imageId = chat.getImageId();
+    return chatEntity;
+  }
+
+  public Chat toChat() {
+    return new Chat(
+        id,
+        users.stream().map(ChatUserValue::toChatUser).toList(),
+        getCreatedAt(),
+        title,
+        imageId);
+  }
+
+  public ChatDetail toChatDetail() {
+    return new ChatDetail(
+        id,
+        users.stream().map(ChatUserValue::toChatUser).toList(),
+        getCreatedAt(),
+        title,
+        imageId,
+        lastMessage != null ? lastMessage.toMessage() : null);
   }
 }
