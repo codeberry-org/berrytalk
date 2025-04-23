@@ -7,33 +7,50 @@ import java.util.Objects;
 import org.codeberry.berrytalk.chat.common.model.Media;
 import org.codeberry.berrytalk.chat.common.util.Args;
 
-import lombok.Getter;
-
-@Getter
 public class ChatUser {
   private final String chatId;
   private final String userId;
-  private final Boolean isCreator;
+  private final boolean isCreator;
   private final Date joinedAt;
   private String lastMessageId;
 
-  ChatUser(String chatId, String userId, Boolean isCreator) {
+  ChatUser(String chatId, String userId, boolean isCreator) {
     this.chatId = Args.requireNotEmpty(chatId, "chatId");
     this.userId = Args.requireNotEmpty(userId, "userId");
-    this.isCreator = Args.requireNotNull(isCreator, "isCreator");
+    this.isCreator = isCreator;
     this.joinedAt = new Date();
   }
   
-  public ChatUser(String chatId, String userId, Boolean isCreator, Date joinedAt, String lastMessageId) {
+  public ChatUser(String chatId, String userId, boolean isCreator, Date joinedAt, String lastMessageId) {
     this.chatId = Args.requireNotEmpty(chatId, "chatId");
     this.userId = Args.requireNotEmpty(userId, "userId");
-    this.isCreator = Args.requireNotNull(isCreator, "isCreator");
+    this.isCreator = isCreator;
     this.joinedAt = Args.requireNotNull(joinedAt, "joinedAt");
     this.lastMessageId = lastMessageId;
   }
 
+  public String getChatId() {
+    return chatId;
+  }
+
+  public String getUserId() {
+    return userId;
+  }
+
+  public boolean getIsCreator() {
+    return isCreator;
+  }
+
+  public Date getJoinedAt() {
+    return joinedAt;
+  }
+
   void updateLastMessageId(String lastMessageId) {
     this.lastMessageId = lastMessageId;
+  }
+
+  public String getLastMessageId() {
+    return lastMessageId;
   }
 
   public TextMessage createTextMessage(String text) {
