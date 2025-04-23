@@ -1,13 +1,12 @@
 package org.codeberry.berrytalk.chat.app.dto;
 
+import org.codeberry.berrytalk.chat.common.util.Args;
 import org.codeberry.berrytalk.chat.domain.Message;
 
 public record MessageInfo() {
   
   public static MessageInfo from(Message message) {
-    if (message == null) {
-      return null;
-    }
+    Args.requireNotNull(message, "message");
     // TODO
     return new MessageInfo();
   }

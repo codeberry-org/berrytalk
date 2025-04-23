@@ -2,6 +2,7 @@ package org.codeberry.berrytalk.chat.app.dto;
 
 import java.util.Date;
 
+import org.codeberry.berrytalk.chat.common.util.Args;
 import org.codeberry.berrytalk.chat.domain.ChatUser;
 
 public record UserInfo(
@@ -11,6 +12,7 @@ public record UserInfo(
     Date joinedAt) {
 
   public static UserInfo from(ChatUser user) {
+    Args.requireNotNull(user, "user");
     return new UserInfo(
         user.getUserId(),
         user.getIsCreator(),

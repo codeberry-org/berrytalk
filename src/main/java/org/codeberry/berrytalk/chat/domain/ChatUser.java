@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.codeberry.berrytalk.chat.common.model.Media;
+import org.codeberry.berrytalk.chat.common.util.Args;
 
 import lombok.Getter;
 
@@ -16,18 +17,18 @@ public class ChatUser {
   private final Date joinedAt;
   private String lastMessageId;
 
-  ChatUser(String chatId, String userId, boolean isCreator) {
-    this.chatId = chatId;
-    this.userId = userId;
-    this.isCreator = isCreator;
+  ChatUser(String chatId, String userId, Boolean isCreator) {
+    this.chatId = Args.requireNotEmpty(chatId, "chatId");
+    this.userId = Args.requireNotEmpty(userId, "userId");
+    this.isCreator = Args.requireNotNull(isCreator, "isCreator");
     this.joinedAt = new Date();
   }
   
   public ChatUser(String chatId, String userId, Boolean isCreator, Date joinedAt, String lastMessageId) {
-    this.chatId = chatId;
-    this.userId = userId;
-    this.isCreator = isCreator;
-    this.joinedAt = joinedAt;
+    this.chatId = Args.requireNotEmpty(chatId, "chatId");
+    this.userId = Args.requireNotEmpty(userId, "userId");
+    this.isCreator = Args.requireNotNull(isCreator, "isCreator");
+    this.joinedAt = Args.requireNotNull(joinedAt, "joinedAt");
     this.lastMessageId = lastMessageId;
   }
 

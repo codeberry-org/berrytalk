@@ -15,6 +15,7 @@ import org.codeberry.berrytalk.chat.domain.Message;
 import org.codeberry.berrytalk.chat.domain.MessageRepository;
 import org.codeberry.berrytalk.chat.domain.NotificationService;
 import org.codeberry.berrytalk.chat.domain.RelayService;
+import org.codeberry.berrytalk.chat.domain.Session;
 import org.codeberry.berrytalk.chat.domain.SessionManager;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,10 @@ public class ChatService {
   private final SessionManager sessionManager;
   private final RelayService relayService;
   private final NotificationService notificationService;
+
+  public void register(Session session) {
+    sessionManager.add(session);
+  }
 
   public ChatInfo createChat(String userId) {
     Chat chat = new Chat(userId);

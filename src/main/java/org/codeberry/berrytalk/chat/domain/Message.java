@@ -2,6 +2,8 @@ package org.codeberry.berrytalk.chat.domain;
 
 import java.util.Date;
 
+import org.codeberry.berrytalk.chat.common.model.MessageType;
+import org.codeberry.berrytalk.chat.common.util.Args;
 import org.codeberry.berrytalk.chat.common.util.IdUtil;
 
 public abstract class Message {
@@ -14,16 +16,16 @@ public abstract class Message {
 
   Message(String chatId, String userId) {
     this.id = IdUtil.create(ID_PREFIX);
-    this.chatId = chatId;
-    this.userId = userId;
+    this.chatId = Args.requireNotEmpty(chatId, "chatId");
+    this.userId = Args.requireNotEmpty(userId, "userId");
     this.createdAt = new Date();
   }
 
   public Message(String id, String chatId, String userId, Date createdAt) {
-    this.id = id;
-    this.chatId = chatId;
-    this.userId = userId;
-    this.createdAt = createdAt;
+    this.id = Args.requireNotEmpty(id, "id");
+    this.chatId = Args.requireNotEmpty(chatId, "chatId");
+    this.userId = Args.requireNotEmpty(userId, "userId");
+    this.createdAt = Args.requireNotNull(createdAt, "createdAt");
   }
 
   public String getId() {
@@ -42,5 +44,7 @@ public abstract class Message {
     return createdAt;
   }
 
+  public abstract MessageType getType();
   public abstract String getTitle();
+  public abstract Object getContent();
 }

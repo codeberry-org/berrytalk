@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.codeberry.berrytalk.chat.common.util.Args;
 import org.codeberry.berrytalk.chat.common.util.IdUtil;
 import org.codeberry.berrytalk.chat.domain.exception.AlreadyExistException;
 
@@ -28,9 +29,9 @@ public class Chat {
   }
 
   public Chat(String id, List<ChatUser> users, Date createdAt, String title, String imageId) {
-    this.id = id;
-    this.users = users;
-    this.createdAt = createdAt;
+    this.id = Args.requireNotEmpty(id, "id");
+    this.users = Args.requireNotNull(users, "user");
+    this.createdAt = Args.requireNotNull(createdAt, "createdAt");
     this.title = title;
     this.imageId = imageId;
   }
@@ -43,7 +44,7 @@ public class Chat {
     if (users.stream().anyMatch(user -> user.getUserId().equals(userId))) {
       throw new AlreadyExistException("User already in chat");
     }
-    ChatUser user = new ChatUser(userId, userId, false);
+    ChatUser user = new ChatUser(id, userId, false);
     users.add(user);
     return user;
   }

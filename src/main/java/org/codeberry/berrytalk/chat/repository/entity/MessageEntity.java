@@ -18,17 +18,13 @@ import lombok.Getter;
 import java.util.List;
 
 import org.codeberry.berrytalk.chat.common.model.Media;
+import org.codeberry.berrytalk.chat.common.model.MessageType;
 import org.codeberry.berrytalk.chat.common.util.JsonUtil;
 
 @Getter
 @Entity
 @Table(name = "message")
 public class MessageEntity extends BaseEntity {
-  public static enum Type {
-    TEXT,
-    MEDIA
-  }
-
   @Id
   @Column(name = "id")
   private String id;
@@ -41,7 +37,7 @@ public class MessageEntity extends BaseEntity {
   private String userId;
 
   @Column(name = "type", nullable = false)
-  private Type type;
+  private MessageType type;
 
   @Column(name = "content", nullable = false)
   private String content;
@@ -53,31 +49,12 @@ public class MessageEntity extends BaseEntity {
   }
 
   public static MessageEntity from(Message message) {
-    if (message instanceof TextMessage textMessage) {
-      return from(textMessage);
-    } else if (message instanceof MediaMessage mediaMessage) {
-      return from(mediaMessage);
-    }
-    return null;
-  }
-
-  private static MessageEntity from(TextMessage message) {
     MessageEntity messageEntity = new MessageEntity();
     messageEntity.id = message.getId();
     messageEntity.chat = new ChatEntity(message.getChatId());
     messageEntity.userId = message.getUserId();
-    messageEntity.type = Type.TEXT;
-    messageEntity.content = message.getText();
-    return messageEntity;
-  }
-
-  private static MessageEntity from(MediaMessage message) {
-    MessageEntity messageEntity = new MessageEntity();
-    messageEntity.id = message.getId();
-    messageEntity.chat = new ChatEntity(message.getChatId());
-    messageEntity.userId = message.getUserId();
-    messageEntity.type = Type.MEDIA;
-    messageEntity.content = JsonUtil.toJson(message.getMedia());
+    messageEntity.type = message.getType();
+    messageEntity.content = JsonUtil.toJson(message.getContent());
     return messageEntity;
   }
 
@@ -93,8 +70,8 @@ public class MessageEntity extends BaseEntity {
         id,
         chat.getId(),
         userId,
-        content,
-        getCreatedAt());
+        getCreatedAt(),
+        content);
   }
 
   private MediaMessage toMediaMessage() {

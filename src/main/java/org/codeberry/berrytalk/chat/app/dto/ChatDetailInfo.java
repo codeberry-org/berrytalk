@@ -3,6 +3,7 @@ package org.codeberry.berrytalk.chat.app.dto;
 import java.util.Date;
 import java.util.List;
 
+import org.codeberry.berrytalk.chat.common.util.Args;
 import org.codeberry.berrytalk.chat.domain.ChatDetail;
 
 public record ChatDetailInfo(
@@ -14,9 +15,7 @@ public record ChatDetailInfo(
     Date createdAt) {
 
   public static ChatDetailInfo from(ChatDetail chatDetail) {
-    if (chatDetail == null) {
-      return null;
-    }
+    Args.requireNotNull(chatDetail, "chatDetail");
     return new ChatDetailInfo(
         chatDetail.id(),
         chatDetail.users().stream().map(UserInfo::from).toList(),
