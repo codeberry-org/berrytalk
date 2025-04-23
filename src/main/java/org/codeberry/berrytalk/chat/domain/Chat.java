@@ -11,11 +11,8 @@ import java.util.Optional;
 import org.codeberry.berrytalk.chat.common.util.IdUtil;
 import org.codeberry.berrytalk.chat.domain.exception.AlreadyExistException;
 
-import lombok.Getter;
-
-@Getter
 public class Chat {
-  private static final String ID_PREFIX = "chat";
+  public static final String ID_PREFIX = "chat";
 
   private final String id;
   private final List<ChatUser> users;
@@ -38,16 +35,8 @@ public class Chat {
     this.imageId = imageId;
   }
 
-  public void updateTitle(String title) {
-    this.title = title;
-  }
-
-  public void updateImageId(String imageId) {
-    this.imageId = imageId;
-  }
-
-  public List<ChatUser> getUsers() {
-    return Collections.unmodifiableList(users);
+  public String getId() {
+    return id;
   }
 
   public ChatUser addUser(String userId) {
@@ -76,6 +65,30 @@ public class Chat {
         .or(() -> users.stream()
             .sorted(Comparator.comparing(ChatUser::getJoinedAt))
             .findFirst());
+  }
+
+  public List<ChatUser> getUsers() {
+    return Collections.unmodifiableList(users);
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void updateTitle(String title) {
+    this.title = title;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void updateImageId(String imageId) {
+    this.imageId = imageId;
+  }
+
+  public String getImageId() {
+    return imageId;
   }
 
   public void readMessage(String userId, String messageId) {

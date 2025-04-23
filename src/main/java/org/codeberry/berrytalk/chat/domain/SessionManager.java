@@ -13,12 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SessionManager {
-  private static final SessionManager INSTANCE = new SessionManager();
-
   private final Map<String, Set<Session>> sessions = new HashMap<>();
   private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
   
-  private SessionManager() {
+  public SessionManager() {
   }
 
   public void add(Session session) {
@@ -76,9 +74,5 @@ public class SessionManager {
     }
 
     return successIds;
-  }
-
-  public static SessionManager getInstance() {
-    return INSTANCE;
   }
 }

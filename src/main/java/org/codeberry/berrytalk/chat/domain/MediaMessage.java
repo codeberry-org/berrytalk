@@ -14,7 +14,7 @@ public class MediaMessage extends Message {
     this.media = media;
   }
 
-  MediaMessage(String id, String chatId, String userId, Date createdAt, List<Media> media) {
+  public MediaMessage(String id, String chatId, String userId, Date createdAt, List<Media> media) {
     super(id, chatId, userId, createdAt);
     this.media = media;
   }
@@ -24,7 +24,7 @@ public class MediaMessage extends Message {
   }
 
   @Override
-  String getTitle() {
+  public String getTitle() {
     return "Media";
   }
   

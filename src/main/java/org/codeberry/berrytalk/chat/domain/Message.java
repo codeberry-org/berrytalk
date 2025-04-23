@@ -4,11 +4,8 @@ import java.util.Date;
 
 import org.codeberry.berrytalk.chat.common.util.IdUtil;
 
-import lombok.Getter;
-
-@Getter
 public abstract class Message {
-  private static final String ID_PREFIX = "msg";
+  public static final String ID_PREFIX = "msg";
 
   private final String id;
   private final String chatId;
@@ -22,12 +19,28 @@ public abstract class Message {
     this.createdAt = new Date();
   }
 
-  Message(String id, String chatId, String userId, Date createdAt) {
+  public Message(String id, String chatId, String userId, Date createdAt) {
     this.id = id;
     this.chatId = chatId;
     this.userId = userId;
     this.createdAt = createdAt;
   }
 
-  abstract String getTitle();
+  public String getId() {
+    return id;
+  }
+
+  public String getChatId() {
+    return chatId;
+  }
+
+  public String getUserId() {
+    return userId;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public abstract String getTitle();
 }

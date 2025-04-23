@@ -2,9 +2,6 @@ package org.codeberry.berrytalk.chat.domain;
 
 import java.util.Date;
 
-import lombok.Getter;
-
-@Getter
 public class TextMessage extends Message {
   private final String text;
 
@@ -13,13 +10,17 @@ public class TextMessage extends Message {
     this.text = text;
   }
 
-  TextMessage(String id, String chatId, String userId, String text, Date createdAt) {
+  public TextMessage(String id, String chatId, String userId, String text, Date createdAt) {
     super(id, chatId, userId, createdAt);
     this.text = text;
   }
 
+  public String getText() {
+    return text;
+  }
+
   @Override
-  String getTitle() {
+  public String getTitle() {
     return text;
   }
   

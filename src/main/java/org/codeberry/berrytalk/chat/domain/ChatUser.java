@@ -23,7 +23,7 @@ public class ChatUser {
     this.joinedAt = new Date();
   }
   
-  ChatUser(String chatId, String userId, Boolean isCreator, Date joinedAt, String lastMessageId) {
+  public ChatUser(String chatId, String userId, Boolean isCreator, Date joinedAt, String lastMessageId) {
     this.chatId = chatId;
     this.userId = userId;
     this.isCreator = isCreator;
