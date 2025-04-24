@@ -2,6 +2,7 @@ package org.codeberry.berrytalk.chat.domain;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -47,6 +48,10 @@ public class Chat {
     ChatUser user = new ChatUser(id, userId, false);
     users.add(user);
     return user;
+  }
+
+  public List<ChatUser> addUsers(Collection<String> userIds) {
+    return userIds.stream().map(this::addUser).toList();
   }
 
   public boolean removeUser(String userId) {

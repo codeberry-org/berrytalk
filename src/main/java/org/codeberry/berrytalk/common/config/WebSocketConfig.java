@@ -1,22 +1,37 @@
 package org.codeberry.berrytalk.common.config;
 
-import org.codeberry.berrytalk.chat.controller.MessageController;
+import java.util.Collection;
+
+import org.codeberry.berrytalk.common.ws.WebSocketMapping;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSocket
 @RequiredArgsConstructor
+@Slf4j
 public class WebSocketConfig implements WebSocketConfigurer {
-  private final MessageController messageController;
+
+  private final ApplicationContext applicationContext;
 
   @Override
   public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-    registry.addHandler(messageController, "/ws/v1/message");
+    Collection<WebSocketHandler> handlers = applicationContext.getBeansOfType(WebSocketHandler.class).values();
+
+    for (WebSocketHandler handler : handlers) {
+      WebSocketMapping mapping = handler.getClass().getAnnotation(WebSocketMapping.class);
+      if (mapping != null) {
+        log.info("WebSocket mapping: {} -> {}", handler.getClass().getSimpleName(), mapping.path());
+        registry.addHandler(handler, mapping.path());
+      }
+    }
   }
-  
+
 }

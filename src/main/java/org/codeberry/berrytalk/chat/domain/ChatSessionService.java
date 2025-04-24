@@ -9,23 +9,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.codeberry.berrytalk.chat.domain.event.ChatEvent;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class MessageSessionService {
-  private final Map<String, MessageSession> sessions = new HashMap<>();
-  private final Map<String, Set<MessageSession>> userSessions = new HashMap<>();
+public class ChatSessionService {
+  private final Map<String, ChatSession> sessions = new HashMap<>();
+  private final Map<String, Set<ChatSession>> userSessions = new HashMap<>();
   private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
   
-  public MessageSessionService() {
+  public ChatSessionService() {
   }
 
-  public void add(MessageSession session) {
+  public void add(ChatSession session) {
     lock.writeLock().lock();
     try {
       sessions.put(session.getId(), session);
       String userId = session.getUserId();
-      Set<MessageSession> sessions = userSessions.getOrDefault(userId, new HashSet<>());
+      Set<ChatSession> sessions = userSessions.getOrDefault(userId, new HashSet<>());
       sessions.add(session);
       userSessions.put(userId, sessions);
     } finally {
@@ -36,10 +38,10 @@ public class MessageSessionService {
   public void remove(String sessionId) {
     lock.writeLock().lock();
     try {
-      MessageSession session = sessions.remove(sessionId);
+      ChatSession session = sessions.remove(sessionId);
       if (session != null) {
         String userId = session.getUserId();
-        Set<MessageSession> sessions = userSessions.get(userId);
+        Set<ChatSession> sessions = userSessions.get(userId);
         if (sessions != null) {
           sessions.remove(session);
           if (sessions.isEmpty()) {
@@ -52,9 +54,9 @@ public class MessageSessionService {
     }
   }
 
-  public Set<String> sendMessage(Collection<String> userIds, Message message) {
+  public Set<String> sendChatEvent(Collection<String> userIds, ChatEvent event) {
     Set<String> successIds = new HashSet<>();
-    List<MessageSession> foundSessions;
+    List<ChatSession> foundSessions;
 
     lock.readLock().lock();
     try {
@@ -65,14 +67,14 @@ public class MessageSessionService {
       lock.readLock().unlock();
     }
 
-    for (MessageSession session: foundSessions) {
+    for (ChatSession session: foundSessions) {
       String userId = session.getUserId();
       String deviceId = session.getDeviceId();
       try {
-        session.sendMessage(message);
+        session.sendChatEvent(event);
         successIds.add(userId);
       } catch (Exception ex) {
-        log.error(String.format("Failed to send message to (%s/%s) - %s", userId, deviceId, ex.getMessage()), ex);
+        log.error(String.format("Failed to send event to (%s/%s) - %s", userId, deviceId, ex.getMessage()), ex);
         closeSession(session);
       }
     }
@@ -80,7 +82,7 @@ public class MessageSessionService {
     return successIds;
   }
 
-  private void closeSession(MessageSession session) {
+  private void closeSession(ChatSession session) {
     remove(session.getId());
     try {
       session.close();
