@@ -32,5 +32,10 @@ public class TextMessage extends Message {
   public String getContent() {
     return text;
   }
-  
+
+  @Override
+  public String toString() {
+    return String.format("TextMessage(id=%s, chatId=%s, userId=%s, createdAt=%s, text=%s)",
+        getId(), getChatId(), getUserId(), getCreatedAt(), text);
+  }
 }

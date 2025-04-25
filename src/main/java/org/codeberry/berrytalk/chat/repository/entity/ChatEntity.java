@@ -1,6 +1,6 @@
 package org.codeberry.berrytalk.chat.repository.entity;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codeberry.berrytalk.chat.domain.Chat;
@@ -13,7 +13,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Data;
@@ -30,8 +29,7 @@ public class ChatEntity extends BaseEntity {
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "chat_user", joinColumns = @JoinColumn(name = "chat_id"))
-  @OrderColumn(name = "joined_at")
-  private List<ChatUserValue> users = Collections.emptyList();
+  private List<ChatUserValue> users = new ArrayList<>();
 
   @Column(name = "title", nullable = true)
   private String title;
@@ -51,7 +49,7 @@ public class ChatEntity extends BaseEntity {
   public static ChatEntity from(Chat chat) {
     ChatEntity chatEntity = new ChatEntity(chat.getId());
     chatEntity.users = chat.getUsers().stream()
-        .map(u -> new ChatUserValue(chatEntity, u))
+        .map(ChatUserValue::new)
         .toList();
     chatEntity.title = chat.getTitle();
     chatEntity.imageId = chat.getImageId();
@@ -61,7 +59,7 @@ public class ChatEntity extends BaseEntity {
   public Chat toChat() {
     return new Chat(
         id,
-        users.stream().map(ChatUserValue::toChatUser).toList(),
+        users.stream().map(u -> u.toChatUser(id)).toList(),
         getCreatedAt(),
         title,
         imageId);
@@ -70,7 +68,7 @@ public class ChatEntity extends BaseEntity {
   public ChatDetail toChatDetail() {
     return new ChatDetail(
         id,
-        users.stream().map(ChatUserValue::toChatUser).toList(),
+        users.stream().map(u -> u.toChatUser(id)).toList(),
         getCreatedAt(),
         title,
         imageId,

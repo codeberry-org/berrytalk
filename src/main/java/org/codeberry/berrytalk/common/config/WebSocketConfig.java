@@ -28,8 +28,8 @@ public class WebSocketConfig implements WebSocketConfigurer {
     for (WebSocketHandler handler : handlers) {
       WebSocketMapping mapping = handler.getClass().getAnnotation(WebSocketMapping.class);
       if (mapping != null) {
-        log.info("WebSocket mapping: {} -> {}", handler.getClass().getSimpleName(), mapping.path());
-        registry.addHandler(handler, mapping.path());
+        log.info("WebSocket mapping: {} -> {}", handler.getClass().getSimpleName(), mapping.value());
+        registry.addHandler(handler, mapping.value());
       }
     }
   }

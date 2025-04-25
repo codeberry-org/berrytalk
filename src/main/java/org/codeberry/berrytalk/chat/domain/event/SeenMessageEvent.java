@@ -1,13 +1,11 @@
 package org.codeberry.berrytalk.chat.domain.event;
 
 public class SeenMessageEvent extends ChatEvent {
-  public static final String TYPE = "SEEN_MESSAGE";
-
   private final String userId;
   private final String lastMessageId;
 
   public SeenMessageEvent(String chatId, String userId, String lastMessageId) {
-    super(chatId, TYPE);
+    super(ChatEventType.SEEN_MESSAGE, chatId);
     this.userId = userId;
     this.lastMessageId = lastMessageId;
   }
@@ -18,5 +16,11 @@ public class SeenMessageEvent extends ChatEvent {
 
   public String getLastMessageId() {
     return lastMessageId;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("SeenMessageEvent(chatId=%s, userId=%s, lastMessageId=%s)",
+        getChatId(), userId, lastMessageId);
   }
 }

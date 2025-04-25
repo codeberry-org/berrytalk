@@ -135,6 +135,8 @@ public class ChatService {
   }
 
   public void addMessage(String userId, String chatId, MessageRequest messageRequest) {
+    log.info("add message: userId({}), chatId({}), messageRequest({})", userId, chatId, messageRequest);
+
     Chat chat = chatRepository.findById(chatId)
         .orElseThrow(() -> new RuntimeException("Chat not exist"));
     ChatUser user = chat.getUser(userId)
@@ -163,6 +165,8 @@ public class ChatService {
   }
 
   public void readMessage(String userId, String chatId, String messageId) {
+    log.info("read message: userId({}), chatId({}), messageId({})", userId, chatId, messageId);
+
     Chat chat = chatRepository.findById(chatId)
         .orElseThrow(() -> new RuntimeException("Chat not exist"));
     chat.getUser(userId)

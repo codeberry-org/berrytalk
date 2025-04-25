@@ -3,6 +3,7 @@ package org.codeberry.berrytalk.chat.controller;
 import java.io.IOException;
 
 import org.codeberry.berrytalk.chat.controller.dto.Client;
+import org.codeberry.berrytalk.chat.controller.dto.event.WSChatEvent;
 import org.codeberry.berrytalk.chat.domain.event.ChatEvent;
 import org.codeberry.berrytalk.chat.domain.ChatSession;
 import org.codeberry.berrytalk.common.model.DeviceType;
@@ -10,14 +11,17 @@ import org.codeberry.berrytalk.common.util.JsonUtil;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-public class WebSocketChatSession implements ChatSession {
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class WSChatSession implements ChatSession {
   private final String id;
   private final String userId;
   private final DeviceType deviceType;
   private final String deviceId;
   private final WebSocketSession webSocketSession;
 
-  WebSocketChatSession(WebSocketSession webSocketSession) {
+  WSChatSession(WebSocketSession webSocketSession) {
     Client client = Client.from(webSocketSession.getHandshakeHeaders());
     this.id = webSocketSession.getId();
     this.userId = client.userId();
@@ -47,8 +51,9 @@ public class WebSocketChatSession implements ChatSession {
   }
 
   @Override
-  public void sendChatEvent(ChatEvent event) {
-    TextMessage textMessage = new TextMessage(JsonUtil.toJson(event));
+  public void sendChatEvent(ChatEvent chatEvent) {
+    log.info("Send: {}", chatEvent);
+    TextMessage textMessage = new TextMessage(JsonUtil.toJson(WSChatEvent.from(chatEvent)));
     try {
       webSocketSession.sendMessage(textMessage);
     } catch (IOException e) {

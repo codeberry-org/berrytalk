@@ -35,5 +35,10 @@ public class MediaMessage extends Message {
   public List<Media> getContent() {
     return Collections.unmodifiableList(media);
   }
-  
+
+  @Override
+  public String toString() {
+    return String.format("MediaMessage(id=%s, chatId=%s, userId=%s, createdAt=%s, media=%s)",
+        getId(), getChatId(), getUserId(), getCreatedAt(), media);
+  }
 }

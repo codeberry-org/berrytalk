@@ -71,4 +71,9 @@ public class ChatUser {
     return obj instanceof ChatUser && ((ChatUser) obj).chatId.equals(chatId) && ((ChatUser) obj).userId.equals(userId);
   }
 
+  @Override
+  public String toString() {
+    return String.format("ChatUser(chatId=%s, userId=%s, isCreator=%b, joinedAt=%s, lastMessageId=%s)",
+        chatId, userId, isCreator, joinedAt, lastMessageId);
+  }
 }

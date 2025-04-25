@@ -1,15 +1,15 @@
 package org.codeberry.berrytalk.chat.domain.event;
 
 public abstract class ChatEvent {
-  private final String type;
+  private final ChatEventType type;
   private final String chatId;
 
-  protected ChatEvent(String type, String chatId) {
-    this.chatId = chatId;
+  protected ChatEvent(ChatEventType type, String chatId) {
     this.type = type;
+    this.chatId = chatId;
   }
 
-  public String getType() {
+  public ChatEventType getType() {
     return type;
   }
 

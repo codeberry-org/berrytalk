@@ -1,23 +1,21 @@
 package org.codeberry.berrytalk.chat.controller;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.codeberry.berrytalk.chat.app.ChatService;
 import org.codeberry.berrytalk.chat.app.dto.ChatDetailInfo;
 import org.codeberry.berrytalk.chat.app.dto.ChatInfo;
 import org.codeberry.berrytalk.chat.app.dto.MessageRequest;
+import org.codeberry.berrytalk.chat.controller.dto.ChatData;
 import org.codeberry.berrytalk.chat.controller.dto.Client;
 import org.codeberry.berrytalk.chat.controller.dto.CreateChatRequest;
 import org.codeberry.berrytalk.chat.controller.dto.InviteChatRequest;
 import org.codeberry.berrytalk.chat.controller.dto.UpdateChatRequest;
-import org.codeberry.berrytalk.chat.controller.dto.event.AddMessageEvent;
-import org.codeberry.berrytalk.chat.controller.dto.event.ReadMessageEvent;
-import org.codeberry.berrytalk.chat.domain.event.ChatEvent;
+import org.codeberry.berrytalk.chat.controller.dto.event.WSChatEvent;
+import org.codeberry.berrytalk.chat.controller.dto.event.WSCreateMessageEvent;
+import org.codeberry.berrytalk.chat.controller.dto.event.WSReadMessageEvent;
 import org.codeberry.berrytalk.common.model.RestResponse;
-import org.codeberry.berrytalk.common.util.JsonUtil;
 import org.codeberry.berrytalk.common.ws.WebSocketMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,28 +31,25 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/chat")
 @WebSocketMapping("/ws/v1/chat")
 @RequiredArgsConstructor
+@Slf4j
 public class ChatController extends TextWebSocketHandler {
-  private static final Map<String, Class<? extends ChatEvent>> CHAT_EVENT_MAP = new HashMap<>() {{
-    put(AddMessageEvent.TYPE, AddMessageEvent.class);
-    put(ReadMessageEvent.TYPE, ReadMessageEvent.class);
-  }};
-
   private final ChatService chatService;
 
   @PostMapping(value = {"/", ""})
-  public RestResponse<ChatInfo> createChat(Client client,
+  public RestResponse<ChatData> createChat(Client client,
       @RequestBody CreateChatRequest request) {
     ChatInfo chatInfo = chatService.createChat(client.userId(), request.inviteeIds());
-    return new RestResponse<>(chatInfo);
+    return new RestResponse<>(ChatData.from(chatInfo));
   }
 
   @PutMapping("/{chatId}")
-  public RestResponse<ChatInfo> updateChat(Client client,
+  public RestResponse<ChatData> updateChat(Client client,
       @PathVariable("chatId") String chatId,
       @RequestBody UpdateChatRequest request) {
     ChatInfo chatInfo = null;
@@ -64,34 +59,34 @@ public class ChatController extends TextWebSocketHandler {
     if (request.imageId() != null) {
       chatInfo = chatService.updateChatImage(client.userId(), chatId, request.imageId());
     }
-    return new RestResponse<ChatInfo>(chatInfo);
+    return new RestResponse<>(ChatData.from(chatInfo));
   }
 
   @PostMapping("/{chatId}/invite")
-  public RestResponse<ChatInfo> inviteChat(Client client,
+  public RestResponse<ChatData> inviteChat(Client client,
       @PathVariable("chatId") String chatId,
       @RequestBody InviteChatRequest request) {
     ChatInfo chatInfo = chatService.inviteChat(client.userId(), chatId, request.inviteeIds());
-    return new RestResponse<ChatInfo>(chatInfo);
+    return new RestResponse<>(ChatData.from(chatInfo));
   }
 
   @PostMapping("/{chatId}/leave")
-  public RestResponse<ChatInfo> leaveChat(Client client,
+  public RestResponse<ChatData> leaveChat(Client client,
       @PathVariable("chatId") String chatId) {
     ChatInfo chatInfo = chatService.leaveChat(client.userId(), chatId);
-    return new RestResponse<ChatInfo>(chatInfo);
+    return new RestResponse<>(ChatData.from(chatInfo));
   }
 
   @GetMapping(value = { "/", "" })
-  public RestResponse<List<ChatDetailInfo>> retrieveChat(Client client,
+  public RestResponse<List<ChatData>> retrieveChat(Client client,
       @RequestParam(name = "updatedAfter") Date updatedAfter) {
     List<ChatDetailInfo> chatInfos = chatService.retrieveChat(client.userId(), updatedAfter);
-    return new RestResponse<>(chatInfos);
+    return new RestResponse<>(chatInfos.stream().map(ChatData::from).toList());
   }
 
   @Override
   public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-    chatService.registerMessageSession(new WebSocketChatSession(session));
+    chatService.registerMessageSession(new WSChatSession(session));
   }
 
   @Override
@@ -102,35 +97,26 @@ public class ChatController extends TextWebSocketHandler {
   @Override
   protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
     Client client = Client.from(session.getHandshakeHeaders());
-    ChatEvent chatEvent = parseChatEvent(message.getPayload());
+    WSChatEvent chatEvent = WSChatEvent.parse(message.getPayload());
+    log.info("Receive: {}", chatEvent);
 
-    if (chatEvent instanceof AddMessageEvent addMessageEvent) {
-      handleAddMessageEvent(client, addMessageEvent);
-    } else if (chatEvent instanceof ReadMessageEvent readMessageEvent) {
-      handleReadMessageEvent(client, readMessageEvent);
+    switch (chatEvent.getType()) {
+      case CREATE_MESSAGE -> handleCreateMessageEvent(client, (WSCreateMessageEvent) chatEvent);
+      case READ_MESSAGE -> handleReadMessageEvent(client, (WSReadMessageEvent) chatEvent);
+      default -> throw new RuntimeException("Invalid ChatEvent - not supported event");
     }
   }
 
-  private ChatEvent parseChatEvent(String payload) {
-    String type = JsonUtil.findStringField(payload, "type")
-        .orElseThrow(() -> new RuntimeException("Invalid ChatEvent - type not found"));
-    Class<? extends ChatEvent> eventClazz = CHAT_EVENT_MAP.get(type);
-    if (eventClazz == null) {
-      throw new RuntimeException("Invalid ChatEvent - unknown type: " + type);
-    }
-    return JsonUtil.fromJson(payload, eventClazz);
-  }
-
-  private void handleAddMessageEvent(Client client, AddMessageEvent addMessageEvent) {
-    MessageRequest messageRequest = switch (addMessageEvent.getMessageType()) {
-      case TEXT -> MessageRequest.newTextMessageRequest(addMessageEvent.getText());
-      case MEDIA -> MessageRequest.newMediaMessageRequest(addMessageEvent.getMedia());
+  private void handleCreateMessageEvent(Client client, WSCreateMessageEvent event) {
+    MessageRequest messageRequest = switch (event.getMessage().type()) {
+      case TEXT -> MessageRequest.newTextMessageRequest(event.getMessage().text());
+      case MEDIA -> MessageRequest.newMediaMessageRequest(event.getMessage().media());
     };
-    chatService.addMessage(client.userId(), addMessageEvent.getChatId(), messageRequest);
+    chatService.addMessage(client.userId(), event.getChatId(), messageRequest);
   }
   
-  private void handleReadMessageEvent(Client client, ReadMessageEvent readMessageEvent) {
-    chatService.readMessage(client.userId(), readMessageEvent.getChatId(), readMessageEvent.getLastMessageId());
+  private void handleReadMessageEvent(Client client, WSReadMessageEvent event) {
+    chatService.readMessage(client.userId(), event.getChatId(), event.getLastMessageId());
   }
 
 }

@@ -1,23 +1,23 @@
 package org.codeberry.berrytalk.chat.controller.dto.event;
 
-import org.codeberry.berrytalk.chat.domain.event.ChatEvent;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
-public class ReadMessageEvent extends ChatEvent {
-  public static final String TYPE = "READ_MESSAGE";
-
+@ToString(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class WSReadMessageEvent extends WSChatEvent {
   private final String lastMessageId;
-
+  
   @JsonCreator
-  public ReadMessageEvent(
+  public WSReadMessageEvent(
       @JsonProperty("chatId") String chatId,
       @JsonProperty("lastMessageId") String lastMessageId) {
-    super(chatId, TYPE);
+    super(WSChatEventType.READ_MESSAGE, chatId);
     this.lastMessageId = lastMessageId;
   }
 }

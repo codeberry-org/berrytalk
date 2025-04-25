@@ -31,7 +31,7 @@ public class Chat {
 
   public Chat(String id, List<ChatUser> users, Date createdAt, String title, String imageId) {
     this.id = Args.requireNotEmpty(id, "id");
-    this.users = Args.requireNotNull(users, "user");
+    this.users = new ArrayList<>(Args.requireNotNull(users, "user"));
     this.createdAt = Args.requireNotNull(createdAt, "createdAt");
     this.title = title;
     this.imageId = imageId;
@@ -106,4 +106,9 @@ public class Chat {
         });
   }
 
+  @Override
+  public String toString() {
+    return String.format("Chat(id=%s, users=%s, createdAt=%s, title=%s, imageId=%s)",
+        id, users, createdAt, title, imageId);
+  }
 }

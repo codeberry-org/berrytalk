@@ -6,14 +6,12 @@ import java.util.List;
 import org.codeberry.berrytalk.chat.domain.ChatUser;
 
 public class UpdateChatEvent extends ChatEvent {
-  public static final String TYPE = "UPDATE_CHAT";
-
   private final String title;
   private final String imageId;
   private final List<ChatUser> users;
 
   public UpdateChatEvent(String chatId, String title, String imageId, List<ChatUser> users) {
-    super(TYPE, chatId);
+    super(ChatEventType.UPDATE_CHAT, chatId);
     this.title = title;
     this.imageId = imageId;
     this.users = users;
@@ -41,5 +39,11 @@ public class UpdateChatEvent extends ChatEvent {
 
   public List<ChatUser> getUsers() {
     return Collections.unmodifiableList(users);
+  }
+
+  @Override
+  public String toString() {
+    return String.format("UpdateChatEvent(chatId=%s, title=%s, imageId=%s, users=%s)",
+        getChatId(), title, imageId, users);
   }
 }

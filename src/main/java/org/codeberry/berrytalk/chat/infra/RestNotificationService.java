@@ -6,7 +6,9 @@ import java.util.Set;
 
 import org.codeberry.berrytalk.chat.domain.NotificationService;
 import org.codeberry.berrytalk.chat.domain.event.ChatEvent;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RestNotificationService implements NotificationService {
 
   @Override

@@ -6,15 +6,11 @@ import org.codeberry.berrytalk.chat.domain.ChatUser;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 @Embeddable
 public class ChatUserValue {
-  @Embedded
-  private ChatEntity chat;
-
   @Column(name = "user_id", nullable = false)
   private String userId;
 
@@ -29,17 +25,16 @@ public class ChatUserValue {
 
   ChatUserValue() {}
 
-  ChatUserValue(ChatEntity chatEntity, ChatUser chatUser) {
-    this.chat = chatEntity;
+  ChatUserValue(ChatUser chatUser) {
     this.userId = chatUser.getUserId();
     this.isCreator = chatUser.getIsCreator();
     this.joinedAt = chatUser.getJoinedAt();
     this.lastMessageId = chatUser.getLastMessageId();
   }
 
-  public ChatUser toChatUser() {
+  public ChatUser toChatUser(String chatId) {
     return new ChatUser(
-        chat.getId(),
+        chatId,
         userId,
         isCreator,
         joinedAt,
